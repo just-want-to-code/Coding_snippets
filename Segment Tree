@@ -1,0 +1,47 @@
+class SegTree{
+    vector<ll> seg;
+public:
+    SegTree(ll n)
+    {
+        seg.resize(4*n);
+    }
+
+    void build(vector<ll> &arr, ll ind,  ll lo, ll hi)
+    {
+        if(lo==hi)
+        {
+            seg[ind]= arr[lo];
+            return ;
+        }
+        else
+        {
+            ll mid= lo + (hi-lo)/2;
+            build(arr, 2*ind, lo, mid);
+            build(arr, 2*ind+1, mid+1, hi);
+            seg[ind]= seg[2*ind] + seg[2*ind+1];
+        }
+    }
+
+    ll sum(ll ind, ll lo, ll hi, ll l, ll r)
+    {
+        if(l>r) return 0;
+        if(l==lo && r==hi) return seg[ind];
+        
+        ll mid= lo + (hi-lo)/2;
+        ll left= sum(2*ind, lo, mid, l , min(mid, r));
+        ll right= sum(2*ind+1, mid+1, hi, max(mid+1, l), r);
+        return left+right;
+    }
+
+    void update(ll ind, ll lo, ll hi, ll i, ll val)
+    {
+        if(lo==hi) seg[ind]= val;
+        else
+        {
+            ll mid= lo+ (hi-lo)/2;
+            if(i<=mid) update(2*ind, lo, mid, i, val);
+            else update(2*ind+1, mid+1, hi, i, val);
+            seg[ind]= seg[2*ind] + seg[2*ind+1];
+        }
+    }
+};
